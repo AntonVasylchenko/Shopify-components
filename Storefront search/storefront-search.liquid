@@ -1,0 +1,13 @@
+{{ 'stortfront-search.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'stortfront-search.js' | asset_url }}" defer></script>
+
+<storefront-search
+  class="storefront-search"
+  data-search-url="{{ routes.search_url }}"
+  data-view-all-label="{{ 'sections.featured_collection.view_all' | t }}"
+>
+  <form data-search-form class="storefront-search__form">
+    <input data-search-input class="storefront-search__input" name="query" type="text">
+  </form>
+  <div data-search-inner class="storefront-search__inner"></div>
+</storefront-search>
