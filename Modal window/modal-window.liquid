@@ -1,0 +1,77 @@
+{% doc %}
+  Renders either a modal trigger or modal content.
+
+  @param {string} type - The element to render. Accepted values: `modal-button` or `modal-content`.
+  @param {string} id - A unique identifier used to associate the modal trigger with its modal content.
+  @param {string} [button_content] - The HTML content rendered inside the trigger. Required when `type` is `modal-button`.
+  @param {string} [modal_content] - The HTML content rendered inside the modal. Required when `type` is `modal-content`.
+  @param {string} [desktop_position] - The modal position on desktop screens. Accepted values: `left`, `right`, `center`, `top`, or `bottom`. Defaults to `center`.
+  @param {string} [mobile_position] - The modal position on mobile screens. Accepted values: `left`, `right`, `center`, `top`, or `bottom`. Defaults to `bottom`.
+  @param {string} [uniq_class_button] - An additional CSS class applied to the modal trigger for custom styling or JavaScript hooks.
+  @param {string} [uniq_class_content] - An additional CSS class applied to the modal content for custom styling or JavaScript hooks.
+  @param {number} [breakpoint] - The viewport width, in pixels, below which the mobile modal position is used.
+  @param {boolean} [use_drag_close] - Use a close effect like on Iphone. Works only when position is bottom
+
+  @example
+  {% render 'modal-window', type: 'modal-button', id: 'foo', button_content: '<div>Open</div>' %}
+  {% render 'modal-window', type: 'modal-content', id: 'foo', modal_content: '<div>Lorem text</div>' %}
+{% enddoc %}
+
+{%- liquid
+  assign type = type | strip
+  assign button_content = button_content | default: '<div>Open</div>'
+  assign modal_content = modal_content | default: '<div>Lorem text</div>'
+  assign desktop_position = desktop_position | default: 'center'
+  assign mobile_position = mobile_position | default: 'bottom'
+  assign breakpoint = breakpoint | default: '768'
+  assign available_types = 'modal-button,modal-content' | split: ','
+  unless available_types contains type
+    break
+  endunless
+  if id == blank
+    break
+  endif
+-%}
+
+{{ 'modal-window.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'modal-window.js' | asset_url }}" defer></script>
+
+{%- if type == 'modal-button' -%}
+  <modal-button
+    role="button"
+    tabindex="0"
+    aria-haspopup="dialog"
+    data-modal-id="{{ id }}"
+    class="modal-button {{ uniq_class_button }}"
+  >
+    {{ button_content }}
+  </modal-button>
+{%- elsif type == 'modal-content' -%}
+  <modal-content
+    inert
+    tabindex="-1"
+    role="dialog"
+    aria-modal="true"
+    data-modal-id="{{ id }}"
+    data-desktop-position="{{ desktop_position }}"
+    data-mobile-position="{{ mobile_position }}"
+    data-breakpoint="{{ breakpoint }}"
+    {% if use_drag_close == true %}
+      {% if desktop_position == 'bottom' or mobile_position == 'bottom' %}
+        data-use-drag-close="true"
+      {% endif %}
+    {% endif %}
+
+    class="modal-content {{ uniq_class_content }}"
+  >
+    <div data-modal-overlay data-close-modal class="modal-content__overlay"></div>
+    <div data-modal-inner class="modal-content__inner">
+      {%- if use_drag_close == true -%}
+        {%- if desktop_position == 'bottom' or mobile_position == 'bottom' -%}
+          <div class="modal-content__drag-icon"><span></span></div>
+        {%- endif -%}
+      {%- endif -%}
+      {{ modal_content }}
+    </div>
+  </modal-content>
+{%- endif -%}
