@@ -1,0 +1,32 @@
+{% doc %}
+  Renders a toast notification container.
+
+  @param {string} id - A unique identifier used to target this toast.
+  @param {string} content - The HTML content rendered inside the toast.
+
+  @example
+  {% render 'toast-ui', id: 'cart-success', content: 'Item added to cart.' %}
+{% enddoc %}
+
+{%- if id == blank or content == blank -%}
+  {%- break -%}
+{%- endif -%}
+
+
+{{ 'toast-ui.css' | asset_url | stylesheet_tag }}
+<script src="{{ 'toast-ui.js' | asset_url }}" defer></script>
+
+<toast-ui
+  class="toast-ui"
+  data-toast-id="{{ id }}"
+  role="status"
+  aria-live="polite"
+  aria-atomic="true"
+  aria-hidden="true"
+>
+  <template data-toast-content>
+    <div class="toast-ui__content">
+      {{ content }}
+    </div>
+  </template>
+</toast-ui>

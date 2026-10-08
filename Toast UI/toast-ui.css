@@ -1,0 +1,57 @@
+:root {
+  --toast-ui-background: rgb(var(--color-foreground, 0, 0, 0));
+  --toast-ui-foreground: rgb(var(--color-background, 255, 255, 255));
+  --toast-ui-radius: 0.4rem;
+}
+
+toast-ui {
+  position: fixed;
+  z-index: 1000;
+  right: 2rem;
+  bottom: 2rem;
+  display: block;
+  width: min(calc(100vw - 4rem), 42rem);
+  visibility: hidden;
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(1rem);
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease,
+    visibility 0.2s ease;
+}
+
+toast-ui.notification-show {
+  visibility: visible;
+  pointer-events: auto;
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.toast-ui__content {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  min-height: 4.8rem;
+  padding: 1.2rem 1.6rem;
+  color: var(--toast-ui-foreground);
+  background: var(--toast-ui-background);
+  border-radius: var(--toast-ui-radius);
+  box-shadow: 0 0.4rem 1.5rem rgba(0, 0, 0, 0.18);
+  font-size: 1.4rem;
+  line-height: 1.4;
+}
+
+@media screen and (max-width: 749px) {
+  toast-ui {
+    right: 1.5rem;
+    bottom: 1.5rem;
+    width: calc(100vw - 3rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  toast-ui {
+    transition: none;
+  }
+}
